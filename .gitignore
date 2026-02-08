@@ -1,0 +1,17 @@
+venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+*.log
+*.sqlite3
+staticfiles/
+venv/local/
+coverage/
+*.egg-info/
+dist/
+build/
+*.egg
+.mypy_cache/
+.pytest_cache/
