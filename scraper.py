@@ -28,7 +28,7 @@ def get_book_boxes(soup):
 
 
 def extract_book_basic(book):
-
+    
 
     if book.a['href']:
         link = "https://books.toscrape.com/catalogue/" + book.a['href']
@@ -53,7 +53,7 @@ def extract_book_basic(book):
             upc = get_details(content_box, "table", "table-striped", "upc").find_all("tr")[0].td.text
             in_stock = get_details(content_box, "table", "table-striped", "Availibility").find_all("tr")[5].td.text
             rating =  get_details(content_box, "p", "star-rating", "Rating")['class'][-1]
-            product_description = content_box.find("p").text
+            product_description = content_box.find_all("p")[3].text
           
 
             
@@ -117,24 +117,22 @@ def save_data(data):
     data['price'] = data['price'].str.strip("Â£")
     data['price'] = data['price'].astype(float)
     data.to_csv("books.csv")
-    data.to_excel("books.xlsx", index=False)
+    data.to_excel("books.xlsx", index=False, engine="openpyxl")
     print("Books saved to the Files")
 
 
 
 def get_details(content, tag, html_class, name, ):
-
-
     if content.find(f"{tag}", class_=f"{html_class}"):
         return content.find(f"{tag}", class_=f"{html_class}")
     else:
-        return f"missing {name}"
+        return None
 
     
 
 
 
-data = scrape_pages(1, 2)
+data = scrape_pages(1,4)
 
 
 try:
