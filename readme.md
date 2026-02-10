@@ -1,92 +1,75 @@
+# Advanced Books Scraper
 
-# Multi-Page Web Scraper 
-
-## 📌 Overview
-
-This Python tool is a production-like web scraper that extracts product listings from a multi-page website and exports the collected data into CSV and Excel files. I
+A multi-page, deep web scraping project built with Python to extract detailed book data from **books.toscrape.com**. This scraper goes beyond basic list-page scraping by visiting each product page to collect rich metadata and clean it for analysis.
 
 ## 🚀 Features
 
-* Scrapes data from multiple pages automatically
-* Uses browser-like headers to reduce blocking
-* Handles missing fields 
-* Implements polite rate limiting with delays
-* Extracts structured product data
-* Exports results to:
+* Multi-page scraping
+* Deep product-page scraping
+* Extracts detailed fields per book:
 
-  * CSV (.csv)
-  * Excel (.xlsx)
-* Console logging for progress tracking
+  * UPC Code
+  * Book Name
+  * Price (cleaned & converted to float)
+  * Rating
+  * Availability
+  * Product Description
+  * Product Link
+* Modular, function-based architecture
+* User-Agent headers + polite request delays
+* Data cleaning and type conversion
+* Export to CSV and Excel
 
 ## 🛠 Technologies Used
 
-* Python
+* Python 3
 * requests
 * BeautifulSoup4
 * pandas
-* lxml
+* openpyxl (for Excel export)
 
-## 📦 Installation
+## 📂 Output Files
 
-1. Clone or download this repository
-2. (Recommended) Create and activate a virtual environment
-3. Install dependencies:
+After running the script, the following files are generated:
 
-```
-pip install requests beautifulsoup4 lxml pandas openpyxl
-```
+* `books.csv`
+* `books.xlsx`
+
+Both files contain cleaned and structured book data ready for analysis.
+
+## 🧠 Project Highlights
+
+This project demonstrates:
+
+* Real-world scraping techniques
+* Handling multi-level page navigation
+* HTML structure analysis
+* Data pipeline thinking (ETL)
+* Debugging data corruption issues
+* Clean, modular Python design
+
+
+
+## ⚠️ Notes
+
+* The scraper relies on the current HTML structure of books.toscrape.com
+* Some fields use positional HTML logic where no class/id is available
+* If the site layout changes, selectors may need adjustment
 
 ## ▶️ How to Run
 
-Run the scraper with:
+1. Install dependencies:
+
+   * pandas
+   * requests
+   * beautifulsoup4
+   * openpyxl
+
+2. Run the script:
 
 ```
 python scraper.py
 ```
 
-## 📄 Output
-
-After execution, the script will generate:
-
-* books.csv
-* books.xlsx
-
-Each file contains:
-
-* Book Name
-* Price
-* Product Link
-
-## 🌐 Target Website
-
-This project is configured to scrape:
-
-[https://books.toscrape.com](https://books.toscrape.com)
-
-The scraper automatically navigates through multiple pages and combines all results into a single dataset.
-
-## 🧩 Use Cases
-
-* Product price monitoring
-* E-commerce data collection
-* Market research
-* Building datasets for analysis
-* Lead and listing extraction
-* Client data scraping jobs
-
-## ⚙️ Key Scraping Techniques Implemented
-
-* Pagination handling
-* Custom User-Agent headers
-* Rate limiting (time delays)
-* Nested HTML parsing
-* Relative to absolute URL conversion
-* Missing field handling
-
-## ⚠️ Notes
-
-* This project is for educational and portfolio purposes
-* Always respect a website’s Terms of Service and robots.txt
-* Increase delays for larger websites to avoid blocking
-* Structure can be reused for client projects on similar sites
+3. Check generated CSV and Excel files in the project directory.
 
