@@ -114,6 +114,8 @@ def scrape_pages(start, end):
 
 
 def save_data(data):
+    data['price'] = data['price'].str.strip("Â£")
+    data['price'] = data['price'].astype(float)
     data.to_csv("books.csv")
     data.to_excel("books.xlsx", index=False)
     print("Books saved to the Files")
@@ -134,7 +136,8 @@ def get_details(content, tag, html_class, name, ):
 
 data = scrape_pages(1, 2)
 
-# try:
-#     save_data(data)
-# except:
-#     print("Couldn't save to file")
+
+try:
+    save_data(data)
+except:
+    print("Couldn't save to file")
