@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 import time
 from bs4 import BeautifulSoup
+import sys
 
 
 
@@ -19,7 +20,10 @@ book_boxes = []
 def get_page(url, i):
     print(f"Scraping Page {i}")
     site = requests.get(url, headers=headers)
-    return site
+    if site.status_code == 200:
+        return site
+    else: 
+        return None
 
 
 
@@ -27,11 +31,11 @@ def get_book_boxes(soup):
     return soup.find_all('li', class_='col-xs-6 col-sm-4 col-md-3 col-lg-3')
 
 
-def extract_book_basic(book):
+def extract_book_basic(book, base_url):
     
 
     if book.a['href']:
-        link = "https://books.toscrape.com/catalogue/" + book.a['href']
+        link = f"{base_url}/catalogue/" + book.a['href']
     else:
         link = "Link Missing"
         print(link)
@@ -80,11 +84,17 @@ def extract_book_basic(book):
     
 
 
-def scrape_pages(start, end):
+def scrape_pages(configuration):
+    start = configuration['start_page']
+    end = configuration['end_page'] + 1
+    
+    base_url = "https://books.toscrape.com/"
+    
     amount_of_books = 0
     
     for i in range(start,end):
-        site_url = f"https://books.toscrape.com/catalogue/page-{i}.html"
+        site_url = f"{base_url}catalogue/page-{i}.html"
+        print(site_url)
 
         site = get_page(site_url, i)
 
@@ -102,7 +112,7 @@ def scrape_pages(start, end):
             
             for book in book_boxes:
                 try:
-                    extract_book_basic(book)
+                    extract_book_basic(book, base_url)
                 except:
                     return
                 
@@ -113,11 +123,11 @@ def scrape_pages(start, end):
     return pd.DataFrame(book_details)
 
 
-def save_data(data):
+def save_data(data, output="output"):
     data['price'] = data['price'].str.strip("Â£")
     data['price'] = data['price'].astype(float)
-    data.to_csv("books.csv")
-    data.to_excel("books.xlsx", index=False, engine="openpyxl")
+    data.to_csv(f"{output}.csv")
+    data.to_excel(f"{output}.xlsx", index=False, engine="openpyxl")
     print("Books saved to the Files")
 
 
@@ -132,10 +142,31 @@ def get_details(content, tag, html_class, name, ):
 
 
 
-data = scrape_pages(1,4)
+
+arguments = sys.argv[1:]
+
+if len(arguments)>0:
+    config = {
+        "start_page": int(arguments[0]),
+        "end_page":int(arguments[1]),
+    }
+
+    data = scrape_pages(config)
+    if len(arguments) == 3:
+        output_file_name = str(arguments[2])
+    else:
+        output_file_name = "output"
+
+    
+    try:
+        save_data(data, output_file_name)
+    except:
+        print("Couldn't save to file")
 
 
-try:
-    save_data(data)
-except:
-    print("Couldn't save to file")
+    
+else:
+    print("arguments not found")
+
+
+
