@@ -20,7 +20,7 @@ logger.setLevel(logging.DEBUG)
 headers ={"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
 " like Gecko) Chrome/144.0.0.0 Safari/537.36"}
 
-book_details = []
+
 book_boxes = []
 
 
@@ -42,7 +42,8 @@ def get_book_boxes(soup):
     return soup.find_all('li', class_='col-xs-6 col-sm-4 col-md-3 col-lg-3')
 
 
-def extract_book_basic(book, base_url):
+def extract_book_basic(book, base_url, book_details):
+
     
 
     if book.a['href']:
@@ -80,6 +81,7 @@ def extract_book_basic(book, base_url):
                             "Product Description": product_description,
                             "product_link": link})
                 
+                
             except:
                 logger.error("Failed to Extract book info")
     except:
@@ -93,9 +95,10 @@ def extract_book_basic(book, base_url):
 def scrape_pages(configuration):
     start = configuration['start_page']
     end = configuration['end_page'] + 1
-    
     base_url = "https://books.toscrape.com/"
     
+
+    book_details = []
     amount_of_books = 0
     
     for i in range(start,end):
@@ -119,14 +122,14 @@ def scrape_pages(configuration):
             amount_of_books += len(book_boxes)
             
             for book in book_boxes:  
-                extract_book_basic(book, base_url)
+                extract_book_basic(book, base_url, book_details)
                
                 
         time.sleep(0.3)
 
     
     logger.info("Scraped "+ str(amount_of_books)+" books")
-  
+    
     return pd.DataFrame(book_details)
 
 
@@ -154,29 +157,31 @@ def get_details(content, tag, html_class, name, ):
 
 
 
-arguments = sys.argv[1:]
 
-if len(arguments)>0:
-    config = {
-        "start_page": int(arguments[0]),
-        "end_page":int(arguments[1]),
-    }
-    if len(arguments) == 3:
-        output_file_name = str(arguments[2])
+
+
+if __name__ == "__main__":
+    arguments = sys.argv[1:]
+
+    if len(arguments)>0:
+        config = {
+            "start_page": int(arguments[0]),
+            "end_page":int(arguments[1]),
+        }
+        if len(arguments) == 3:
+            output_file_name = str(arguments[2])
+        else:
+            output_file_name = "output"
+
+
+    
+        logger.info("Script Start")
+        logger.info(f"Extracting Page {arguments[0]} to Page {arguments[1]} --> Output File: {output_file_name}")
+        data = scrape_pages(config)
+
+        
+        save_data(data, output_file_name)
+        
     else:
-        output_file_name = "output"
-
-
-  
-    logger.info("Script Start")
-    logger.info(f"Extracting Page {arguments[0]} to Page {arguments[1]} --> Output File: {output_file_name}")
-    data = scrape_pages(config)
-
-    
-    save_data(data, output_file_name)
-    
-else:
-    logger.error("ARGUMENTS NOT FOUND")
-
-
-
+        logger.error("ARGUMENTS NOT FOUND")
+        
